@@ -11,7 +11,12 @@ pipeline {
         stage("cleanup") {
             steps {
                 bat '''
-                for /f %%i in ('docker ps -aq') do docker rm -f %%i
+                docker ps -aq > tmp.txt
+                if exist tmp.txt (
+                    for /f %%i in (tmp.txt) do docker rm -f %%i
+                )
+                del tmp.txt
+                exit 0
                 '''
             }
         }
@@ -29,3 +34,4 @@ pipeline {
         }
     }
 }
+
